@@ -1,2 +1,2 @@
 # dateprojs
- Zadanie DatePro.js
+ Rozwiązanie zadania DatePro.js
