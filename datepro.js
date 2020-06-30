@@ -1,6 +1,25 @@
 // Stwórz klasę DatePro, która pozwala na łatwą operację na datach w różnych formatach
 
 
+// Klasa DatePro zawiera konstruktora constructor(dateAsString, inputDateFormat='DD.MM.YYYY'),
+// metodę format(outputDateFormat) i statyczną metodę howMenyDays(instanceDatePro1,instanceDatePro2)
+
+// Konstruktor przyjmuje parametry dateAsString i inputDateFormat zdomyślnym formatem 'DD.MM.YYYY'
+// Konstruktor sprawdza czy w inputDateformat znajduje się dokładnie jeden 'DD' i jeden 'MM', przy czym dopuszcza możliwość
+// wystąpienia pojedynczych znaków 'D' i 'M' co umożliwia np inputDateFormat = "Dzień: DDMMYYYY".
+// Konstruktor wyklucza wstawienie w inputDateFormat ciągów potrójnych oraz pięciu i więcej znaków 'Y",
+// podwójny wzór 'YY' jest interpretowany jako końcówka bieżącego wieku  'YY' -> '20YY',
+// a brak 'YY' lub 'YYYY' jest traktowany jako bieżący rok.
+// Po zczytaniu danych z dateAsString następuje sprawdzenie czy dany dzień istnieje.
+// Gdy wszystko jest ok ustawiane są właściwości klasy day, month, year oraz obiekt date
+
+// Metoda format(outputStringFormat='DD.MM.YYYY') sprawdza outputStringFormat na występowanie
+// przynajmniej jednego z ciągów znaków: 'DD', 'MM', 'YY', 'YYYY' i zwraca string zgodny z formatem.
+
+// Statyczna metoda howMenyDays(instanceDatePro1,instanceDatePro2) zwraca ilość dni między dwiema instancjami klasy DatePro
+
+
+
 
 class DatePro{
     constructor(dateAsString, inputDateFormat='DD.MM.YYYY'){
@@ -18,7 +37,7 @@ class DatePro{
             const regexCheckMonth = /^(?:[^M]*M?[^M])*M{2}(?:[^M]M?[^M]*)*$/  //sprawdza czy jest raz MM
             const regexCheckYearYY = /^(?:[^Y]*Y?[^Y])*Y{2}(?:[^Y]Y?[^Y]*)*$/  //sprawdza czy jest raz YY
             const regexCheckYearYYYY = /^(?:[^Y]*Y?[^Y])*Y{4}(?:[^Y]Y?[^Y]*)*$/  //sprawdza czy jest raz YYYY
-            const regexCheckYearY = /[Y]/g  ////sprawdza czy jest Y w stringu 
+            const regexCheckYearY = /^[^Y]*Y{3}[^Y]*$|Y{5,}/  ////sprawdza czy Y występuje 3, 5 lub więcej razy w stringu
         
             if (!regexCheckDay.test(inputDateFormat)) {
                 throw new Error(`Input day should be formated: DD`)
@@ -28,9 +47,9 @@ class DatePro{
                 throw new Error(`Input month should be formated: MM`)
             }
         
-            // if (!regexCheckYearYYYY.test(inputDateFormat) && !regexCheckYearYY.test(inputDateFormat)) {               
-            //     throw new Error(`Input year should be formated: YYYY, YY or absence of Y which means actual year`)
-            // }
+            if (regexCheckYearY.test(inputDateFormat)) {               
+                throw new Error(`Input year should be formated: YYYY, YY or absence of Y which means actual year`)
+            }
             
             return true
             
@@ -136,7 +155,7 @@ class DatePro{
                 throw TypeError(" Input date format must be a string.")
             }
         
-            const regexCheckAll = /^[^D]*D{2}[^D]*$|^[^M]*M{2}[^M]*$|^[^Y]*Y{2}[^Y]*$|^[^Y]*Y{4}[^Y]*$/
+            const regexCheckAll = /^(?:[^D]*D?[^D])*D{2}(?:[^D]D?[^D]*)*$|^(?:[^M]*M?[^M])*M{2}(?:[^M]M?[^M]*)*$|^(?:[^Y]*Y?[^Y])*Y{2}(?:[^Y]Y?[^Y]*)*$|^(?:[^Y]*Y?[^Y])*Y{4}(?:[^Y]Y?[^Y]*)*$/
         
             if(!regexCheckAll.test(outputStringFormat)) {
                     throw new Error(`OutputStringFormat must contain at least one of DD MM YY YYYY`)
@@ -198,12 +217,27 @@ const date3 = '20-03-20'
 const formatDate3 = 'DD-MM-YYYY'
 const instance3 = new DatePro(date3, formatDate3)
 
-const date4 = '29-03-2020'
+const date4 = '29-10-2020'
 const formatDate4 = 'DD-MM-YYYY'
 const instance4 = new DatePro(date4, formatDate4)
+
+const date5 = '29031920'
+const formatDate5 = 'DDMMYYYY'
+const instance5 = new DatePro(date5, formatDate5)
+
+const date6 = 'Dzień 29, miesiąc 03, rok 2020'
+const formatDate6 = 'Dzień DD, miesiąc MM, rok YYYY'
+const instance6 = new DatePro(date6, formatDate6)
 
 
 instance1.format() // '23.03.2020'
 instance2.format() // '23.03.2020'
 instance3.format() // '23.03.2020'
 instance4.format() // '29.03.2020'
+
+console.log(instance1.format())
+console.log(instance2.format())
+console.log(instance3.format())
+console.log(instance4.format('DD dzień MM miesiąca YY roku'))
+console.log(instance5.format('Dzień: MM/DD/YYYY'))
+console.log(instance6.format('MM----DD--YYYY'))
